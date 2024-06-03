@@ -1,11 +1,20 @@
 package com.ll.chat_2024_06_03.domain.chat.chatRoom.controller;
 
+import com.ll.chat_2024_06_03.domain.chat.chatRoom.entity.ChatRoom;
+import com.ll.chat_2024_06_03.domain.chat.chatRoom.service.ChatRoomService;
+import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @Controller
 @RequestMapping("/chat/room")
+@RequiredArgsConstructor
 public class chatRoomController {
+
+    private final ChatRoomService chatRoomService;
 
     @GetMapping("/{roomId}")
     @ResponseBody
@@ -18,4 +27,18 @@ public class chatRoomController {
     public String showMake(){
         return "domain/chat/chatRoom/make";
     }
+
+    @PostMapping("/make")
+    public String make(@RequestParam(value = "name") final String name){
+        chatRoomService.make(name);
+        return "redirect:/chat/room/make?message=Chat Room Created";
+    }
+
+    @GetMapping("/list")
+    @ResponseBody
+    public List<ChatRoom> showList(){
+        return chatRoomService.findAll();
+    }
+
+
 }
