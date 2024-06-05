@@ -1,7 +1,9 @@
 package com.ll.chat_2024_06_03.domain.chat.chatRoom.entity;
 
+import com.ll.chat_2024_06_03.global.jpa.baseEntity.BaseEntity;
 import jakarta.persistence.*;
 import lombok.*;
+import lombok.experimental.SuperBuilder;
 import org.springframework.boot.autoconfigure.domain.EntityScan;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
@@ -13,35 +15,25 @@ import java.util.List;
 
 
 @Entity
-@Builder
-@EntityListeners(AuditingEntityListener.class)
 @AllArgsConstructor(access = AccessLevel.PROTECTED)
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class ChatRoom {
+@SuperBuilder // 상속 받기 위함
+@Getter
+@Setter
+@ToString(callSuper = true)
+public class ChatRoom extends BaseEntity {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Getter
-    private Long id;
 
-    @CreatedDate
-    @Getter
-    private LocalDateTime createDate;
-
-    @LastModifiedDate
-    @Getter
-    private LocalDateTime modifyDate;
-
-    @Getter
     private String name;
 
     public ChatRoom(String name){
         this.name = name;
     }
 
-    @Getter
+
     @Builder.Default
     @OneToMany(mappedBy = "chatRoom", cascade = CascadeType.ALL, orphanRemoval = true)
+    @ToString.Exclude
     private List<ChatMessage> chatMessages = new ArrayList<>();
 
     public void writeMessage(String writerName, String content) {
