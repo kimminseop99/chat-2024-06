@@ -6,10 +6,11 @@
 </div>
 
 <a onclick="return false;" href="https://www.naver.com">네이버로 이동</a>
-<form onsubmit="submitWriteForm(this); return false;"  method="POST">
+
+<form onsubmit="submitWriteForm(this); return false;" method="POST">
     <input type="text" name="writerName" placeholder="작성자 명">
     <input type="text" name="content" placeholder="내용">
-    <input type="submit" value="작성" >
+    <input type="submit" value="작성">
 </form>
 
 <div>
@@ -25,41 +26,50 @@
 
 <script th:inline="javascript">
     const roomId = /*[[${roomId}]]*/ 0;
-
 </script>
+
 <script>
-    function submitWriteForm(form){
+    function submitWriteForm(form) {
         form.writerName.value = form.writerName.value.trim();
 
-        if(form.writerName.value.length == 0){
-            alert("작성자 명을 입력해주세여.");
+        if ( form.writerName.value.length == 0 ) {
+            alert("작성자 명을 입력해주세요.");
             form.writerName.focus();
             return;
-            }
+        }
 
-         form.content.value = form.content.value.trim();
+        form.content.value = form.content.value.trim();
 
-        if(form.content.value.length == 0){
-            alert("내용을 입력해주세여.");
+        if ( form.content.value.length == 0 ) {
+            alert("내용을 입력해주세요.");
             form.content.focus();
             return;
-            }
+        }
 
-        const action = '/chat/room/${roomId}/write';
+        const action = `/chat/room/${roomId}/write`;
 
         fetch(
             action,
             {
                 method: 'POST',
-                headers: {
-                    'accept': 'application/json',
-                    'Content-Type': 'application/json',
+                headers:  {
+                    'accept' : 'application/json',
+                    'Content-Type' : 'application/json',
                 },
                 body: JSON.stringify({
                     writerName: form.writerName.value,
                     content: form.content.value,
                 }),
             }
-        );
+        ).then(
+            response => response.json()
+        ).then(
+            json => {
+                if ( json.msg ) alert(json.msg);
+            }
+        ).catch(error => alert(error));
+
+        form.content.value = '';
+        form.content.focus();
     }
 </script>
