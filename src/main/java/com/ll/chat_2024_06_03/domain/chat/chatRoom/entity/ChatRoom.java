@@ -1,44 +1,44 @@
 package com.ll.chat_2024_06_03.domain.chat.chatRoom.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.ll.chat_2024_06_03.domain.chat.chatMessage.entity.ChatMessage;
 import com.ll.chat_2024_06_03.global.jpa.baseEntity.BaseEntity;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
-import org.springframework.boot.autoconfigure.domain.EntityScan;
-import org.springframework.data.annotation.CreatedDate;
-import org.springframework.data.annotation.LastModifiedDate;
-import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
+import static lombok.AccessLevel.PROTECTED;
+
 
 @Entity
-@AllArgsConstructor(access = AccessLevel.PROTECTED)
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
-@SuperBuilder // 상속 받기 위함
+@AllArgsConstructor(access = PROTECTED)
+@NoArgsConstructor(access = PROTECTED)
+@SuperBuilder
 @Getter
 @Setter
 @ToString(callSuper = true)
 public class ChatRoom extends BaseEntity {
-
-
+    @Getter
     private String name;
 
-    public ChatRoom(String name){
+    @OneToMany(mappedBy = "chatRoom", cascade = CascadeType.ALL, orphanRemoval = true)
+    @Builder.Default
+    @Getter
+    @ToString.Exclude
+    @OrderBy("id DESC")
+    @JsonIgnore
+    private List<ChatMessage> chatMessages = new ArrayList<>();
+
+    public ChatRoom(String name) {
         this.name = name;
     }
 
-
-    @Builder.Default
-    @OneToMany(mappedBy = "chatRoom", cascade = CascadeType.ALL, orphanRemoval = true)
-    @ToString.Exclude
-    @OrderBy("id DESC")
-    private List<ChatMessage> chatMessages = new ArrayList<>();
-
     public ChatMessage writeMessage(String writerName, String content) {
-        ChatMessage chatMessage = ChatMessage.builder()
+        ChatMessage chatMessage = ChatMessage
+                .builder()
                 .chatRoom(this)
                 .writerName(writerName)
                 .content(content)
