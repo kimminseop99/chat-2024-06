@@ -34,6 +34,7 @@ public class ChatRoom extends BaseEntity {
     @Builder.Default
     @OneToMany(mappedBy = "chatRoom", cascade = CascadeType.ALL, orphanRemoval = true)
     @ToString.Exclude
+    @OrderBy("id DESC")
     private List<ChatMessage> chatMessages = new ArrayList<>();
 
     public ChatMessage writeMessage(String writerName, String content) {
